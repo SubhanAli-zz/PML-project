@@ -2,7 +2,9 @@
 title: "Practical Machine Learning Project"
 author: "Subhan Ali"
 date: "Friday, June 19, 2015"
-output: html_document
+output:
+  html_document:
+    keep_md: yes
 ---
 ##Data Loading
 First, I went ahead and loaded the data into R. Since the data was already partitioned between the training and tests sets, I did not need to use R in order to further subset the data.
