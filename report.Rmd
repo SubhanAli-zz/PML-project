@@ -1,0 +1,49 @@
+---
+title: "Practical Machine Learning Project"
+author: "Subhan Ali"
+date: "Friday, June 19, 2015"
+output: html_document
+---
+##Data Loading
+First, I went ahead and loaded the data into R. Since the data was already partitioned between the training and tests sets, I did not need to use R in order to further subset the data.
+
+```{r}
+library(rpart)
+library(ggplot2)
+library(caret)
+library(lattice)
+
+testing <- read.csv("pml-testing.csv")
+training <- read.csv("pml-training.csv")
+attach(training)
+```
+
+##Model Fitting and Selection
+Ultimately, I decided to choose a boosting model with trees. I did also consider and attempt to use a random forest model, but when I used the random forest model and predicted the values on the test set, there was only 50% accuracy so using a more accurate method was necessary. I also specified which variables were to be used in the model creation since many of the variables were completely missing and including them in the model would yield erroneous results.
+ 
+```{r}
+boosting <- train(classe ~ num_window + roll_belt + pitch_belt + yaw_belt + 
+                      total_accel_belt + gyros_belt_x + gyros_belt_y + gyros_belt_z + 
+                      accel_belt_x + accel_belt_y + accel_belt_z + magnet_belt_x + 
+                      magnet_belt_y + magnet_belt_z + roll_arm + pitch_arm + yaw_arm + 
+                      total_accel_arm + gyros_arm_x + gyros_arm_y + gyros_arm_z + accel_arm_x + 
+                      accel_arm_y + accel_arm_z + magnet_arm_x + magnet_arm_y + magnet_arm_z + 
+                      roll_dumbbell + pitch_dumbbell + yaw_dumbbell, 
+                  method = "gbm", 
+                  data = training, 
+                  verbose = F)
+boosting
+```
+
+Estimated error is 98.9% and the estimated out of sample error is therefore 1.1%.
+
+##Prediction using the Model
+```{r}
+answers <- predict(boosting, newdata = testing)
+answers
+```
+From the above, I was able to use the model in order to predict on the test set. 
+
+```{r}
+plot(boosting)
+```
